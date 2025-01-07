@@ -7,7 +7,7 @@ export class RoomModel extends Model implements Rooms {
   id!: number;
   room_name!: string;
   room_number!: number;
-
+  count?: number;
   static tableName = 'rooms'; // database table name
   static idColumn = 'id'; // id column name
 }

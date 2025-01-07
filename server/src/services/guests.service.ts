@@ -5,7 +5,10 @@ import { GuestModel, Guest } from '@models/guests.model';
 
 @Service()
 export class GuestService {
-  public async findAllGuest({ page = 1, limit = 10 }): Promise<Guests[]> {
+  public async findAllGuest({ page = 1, limit = 10 }): Promise<{
+    guests: Guests[];
+    totalPages: number;
+  }> {
     if (limit > 100) throw new HttpException(400, 'Limit should be less than 100');
     if (page < 1) throw new HttpException(400, 'Page should be greater than 0');
 
@@ -15,7 +18,14 @@ export class GuestService {
       .offset(Number((page - 1) * limit))
       .limit(Number(limit));
 
-    return guests;
+    const totalRoomsResult = await GuestModel.query().count('id as count').first();
+    const totalRooms = Number(totalRoomsResult?.count ?? 0);
+    const totalPages = Math.ceil(totalRooms / limit);
+
+    return {
+      guests,
+      totalPages,
+    };
   }
 
   public async createGuest({ guestData }: { guestData: Guest }): Promise<Guests> {

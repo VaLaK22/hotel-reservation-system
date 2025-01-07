@@ -16,5 +16,7 @@ export class RoomRoute implements Routes {
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.room.getRooms);
     this.router.post(`${this.path}`, validate(RoomSchema), this.room.createRoom);
+    this.router.put(`${this.path}/:id`, validate(RoomSchema), this.room.updateRoom);
+    this.router.get(`${this.path}/:id`, this.room.getRoomById);
   }
 }

@@ -150,6 +150,50 @@ paths:
         500:
           description: 'Server Error'
 
+  /rooms/{id}:
+    put:
+      tags:
+        - rooms
+      summary: Update a room
+      parameters:
+        - name: id
+          in: path
+          description: 'The ID of the room'
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Room Object
+          required: true
+          schema:
+            $ref: '#/definitions/rooms'
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+    get:
+      tags:
+        - rooms
+      summary: Get a room by ID
+      parameters:
+        - name: id
+          in: path
+          description: 'The ID of the room'
+          required: true
+          type: string
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
 # definitions
 definitions:
   guests:

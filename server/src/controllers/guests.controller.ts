@@ -11,12 +11,15 @@ export class GuestController {
     try {
       const { page = 1, limit = 10 } = req.query;
 
-      const findAllGuestsData: Guests[] = await this.guest.findAllGuest({
+      const findAllGuestsData: {
+        guests: Guests[];
+        totalPages: number;
+      } = await this.guest.findAllGuest({
         page: Number(page),
         limit: Number(limit),
       });
 
-      res.status(200).json({ data: findAllGuestsData, message: 'findAll', page, limit });
+      res.status(200).json({ data: findAllGuestsData.guests, message: 'findAll', page, limit, totalPages: findAllGuestsData.totalPages });
     } catch (error) {
       next(error);
     }

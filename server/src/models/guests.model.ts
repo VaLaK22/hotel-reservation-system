@@ -9,6 +9,7 @@ export class GuestModel extends Model implements Guests {
   email!: string;
   phone_number!: string;
 
+  count?: number;
   static tableName = 'guests'; // database table name
   static idColumn = 'id'; // id column name
 }

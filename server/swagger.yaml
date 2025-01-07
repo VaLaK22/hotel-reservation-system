@@ -1,0 +1,60 @@
+tags:
+  - name: guests
+    description: guests API
+paths:
+  # [GET] guests
+  /guests:
+    get:
+      tags:
+        - guests
+      summary: Find All guests
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+
+    # [POST] guests
+    post:
+      tags:
+        - guests
+      summary: Create a guest
+      parameters:
+        - name: body
+          in: body
+          description: Guest Object
+          required: true
+          schema:
+            $ref: '#/definitions/guests'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+# definitions
+definitions:
+  guests:
+    type: object
+    required:
+      - name
+      - email
+      - phone_number
+    properties:
+      name:
+        type: string
+        description: Guest Name
+      email:
+        type: string
+        description: Guest Email
+      phone_number:
+        type: string
+        description: Guest Phone Number
+
+schemes:
+  - https
+  - http

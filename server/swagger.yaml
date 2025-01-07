@@ -1,6 +1,8 @@
 tags:
   - name: guests
     description: guests API
+  - name: rooms
+    description: rooms API
 paths:
   # [GET] guests
   /guests:
@@ -100,6 +102,49 @@ paths:
         500:
           description: 'Server Error'
 
+  # [GET] rooms
+  /rooms:
+    get:
+      tags:
+        - rooms
+      summary: Get all rooms
+      parameters:
+        - name: limit
+          in: query
+          description: Limit
+          required: false
+          type: integer
+        - name: page
+          in: query
+          description: Page
+          required: false
+          type: integer
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+    post:
+      tags:
+        - rooms
+      summary: Create a room
+      parameters:
+        - name: body
+          in: body
+          description: Room Object
+          required: true
+          schema:
+            $ref: '#/definitions/rooms'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+
 # definitions
 definitions:
   guests:
@@ -118,6 +163,18 @@ definitions:
       phone_number:
         type: string
         description: Guest Phone Number
+  rooms:
+    type: object
+    required:
+      - room_name
+      - room_number
+    properties:
+      room_name:
+        type: string
+        description: Room Name
+      room_number:
+        type: integer
+        description: Room Number
 
 schemes:
   - https

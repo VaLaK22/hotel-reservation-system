@@ -6,8 +6,6 @@ import { GuestModel, Guest } from '@models/guests.model';
 @Service()
 export class GuestService {
   public async findAllGuest({ page = 1, limit = 10 }): Promise<Guests[]> {
-    // don't show the createAt and updateAt fields
-
     const guests: Guests[] = await GuestModel.query()
       .select('id', 'name', 'phone_number', 'email')
       .from('guests')

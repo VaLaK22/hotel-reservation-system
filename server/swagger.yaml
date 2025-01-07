@@ -8,6 +8,17 @@ paths:
       tags:
         - guests
       summary: Find All guests
+      parameters:
+        - name: limit
+          in: query
+          description: Limit
+          required: false
+          type: integer
+        - name: page
+          in: query
+          description: Page
+          required: false
+          type: integer
       responses:
         200:
           description: 'OK'
@@ -33,6 +44,59 @@ paths:
           description: 'Bad Request'
         409:
           description: 'Conflict'
+        500:
+          description: 'Server Error'
+
+  # [PUT] guests
+  /guests/{id}:
+    put:
+      tags:
+        - guests
+      summary: Update a guest
+      parameters:
+        - name: id
+          in: path
+          description: 'The ID of the guest'
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Guest Object
+          required: true
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              email:
+                type: string
+              phone_number:
+                type: string
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
+    get:
+      tags:
+        - guests
+      summary: Get a guest by ID
+      parameters:
+        - name: id
+          in: path
+          description: 'The ID of the guest'
+          required: true
+          type: string
+      responses:
+        200:
+          description: 'OK'
+        404:
+          description: 'Not Found'
         500:
           description: 'Server Error'
 

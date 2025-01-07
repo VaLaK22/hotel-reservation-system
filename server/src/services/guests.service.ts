@@ -6,6 +6,9 @@ import { GuestModel, Guest } from '@models/guests.model';
 @Service()
 export class GuestService {
   public async findAllGuest({ page = 1, limit = 10 }): Promise<Guests[]> {
+    if (limit > 100) throw new HttpException(400, 'Limit should be less than 100');
+    if (page < 1) throw new HttpException(400, 'Page should be greater than 0');
+
     const guests: Guests[] = await GuestModel.query()
       .select('id', 'name', 'phone_number', 'email')
       .from('guests')
@@ -15,7 +18,7 @@ export class GuestService {
     return guests;
   }
 
-  public async createGuest(guestData: Guest): Promise<Guests> {
+  public async createGuest({ guestData }: { guestData: Guest }): Promise<Guests> {
     const findGuest: Guests = await GuestModel.query().select().from('guests').where('phone_number', '=', guestData.phone_number).first();
     if (findGuest) throw new HttpException(409, `This phone number ${guestData.phone_number} already exists`);
 
@@ -26,7 +29,7 @@ export class GuestService {
     return createGuestData;
   }
 
-  public async updateGuest(guestId: number, guestData: Guest): Promise<Guests> {
+  public async updateGuest({ guestId, guestData }: { guestId: number; guestData: Guest }): Promise<Guests> {
     const findGuest: Guests = await GuestModel.query().select().from('guests').where('id', '=', guestId).first();
     if (!findGuest) throw new HttpException(409, `Guest was not found`);
     await GuestModel.query()
@@ -42,7 +45,7 @@ export class GuestService {
     return updateGuestData;
   }
 
-  public async getGuestById(guestId: number): Promise<Guests> {
+  public async getGuestById({ guestId }: { guestId: number }): Promise<Guests> {
     const findGuest: Guests = await GuestModel.query().select('id', 'name', 'phone_number', 'email').from('guests').where('id', '=', guestId).first();
     if (!findGuest) throw new HttpException(409, `Guest was not found`);
 

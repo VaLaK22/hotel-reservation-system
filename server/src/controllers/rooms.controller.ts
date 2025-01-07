@@ -25,7 +25,9 @@ export class RoomController {
   public createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const roomData: Room = req.body;
-      const createRoomData: Rooms = await this.room.createRoom(roomData);
+      const createRoomData: Rooms = await this.room.createRoom({
+        roomData,
+      });
 
       res.status(201).json({ data: createRoomData, message: 'created' });
     } catch (error) {

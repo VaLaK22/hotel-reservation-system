@@ -25,7 +25,9 @@ export class GuestController {
   public createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const guestData: Guest = req.body;
-      const createGuestData: Guests = await this.guest.createGuest(guestData);
+      const createGuestData: Guests = await this.guest.createGuest({
+        guestData,
+      });
 
       res.status(201).json({ data: createGuestData, message: 'created' });
     } catch (error) {
@@ -37,7 +39,10 @@ export class GuestController {
     try {
       const guestId = Number(req.params.id);
       const guestData: Guest = req.body;
-      const updateGuestData: Guests = await this.guest.updateGuest(guestId, guestData);
+      const updateGuestData: Guests = await this.guest.updateGuest({
+        guestId,
+        guestData,
+      });
 
       res.status(200).json({ data: updateGuestData, message: 'updated' });
     } catch (error) {
@@ -48,7 +53,9 @@ export class GuestController {
   public getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const guestId = Number(req.params.id);
-      const findOneGuestData: Guests = await this.guest.getGuestById(guestId);
+      const findOneGuestData: Guests = await this.guest.getGuestById({
+        guestId,
+      });
 
       res.status(200).json({ data: findOneGuestData, message: 'findOne' });
     } catch (error) {

@@ -119,6 +119,11 @@ paths:
           description: Page
           required: false
           type: integer
+        - name: sort
+          in: query
+          description: Sort by room_number or room_name
+          required: false
+          type: string
       responses:
         200:
           description: 'OK'

@@ -54,7 +54,21 @@ export class RoomController {
   public getRoomById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const roomId = Number(req.params.id);
-      const roomData: Rooms = await this.room.getRoomById({ roomId });
+      const roomData: {
+        id: number;
+        room_name: string;
+        room_number: number;
+        currentReservation: {
+          id: number;
+          start_date: string;
+          end_date: string;
+        } | null;
+        upcomingReservations: {
+          id: number;
+          start_date: string;
+          end_date: string;
+        }[];
+      } = await this.room.getRoomById({ roomId });
 
       res.status(200).json({ data: roomData, message: 'findOne' });
     } catch (error) {

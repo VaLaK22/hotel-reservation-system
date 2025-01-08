@@ -2,29 +2,40 @@ import { Service } from 'typedi';
 import { HttpException } from '@exceptions/HttpException';
 import { Rooms } from '@interfaces/rooms.interface';
 import { Room, RoomModel } from '@models/rooms.model';
+import { ReservationModel } from '@/models/reservations.model';
 
 @Service()
 export class RoomService {
   public async findAllRoom({
     page = 1,
     limit = 10,
-    sort = 'room_name',
+    sort = 'room_number',
   }: {
     page: number;
     limit: number;
     sort?: any;
   }): Promise<{ rooms: Rooms[]; totalPages: number }> {
-    console.log('sort', sort);
+    const sortDirection = sort === 'room_number' ? 'asc' : 'desc';
+
     if (limit > 100) throw new HttpException(400, 'Limit should be less than 100');
     if (page < 1) throw new HttpException(400, 'Page should be greater than 0');
-    if (!['room_name', 'room_number'].includes(sort)) throw new HttpException(400, 'Sort should be either room_name or room_number');
 
-    const rooms: Rooms[] = await RoomModel.query()
-      .select('id', 'room_name', 'room_number')
-      .from('rooms')
-      .orderBy(sort, 'asc')
-      .offset(Number((page - 1) * limit))
-      .limit(Number(limit));
+    if (!['room_name', 'room_number', 'total_reservations'].includes(sort))
+      throw new HttpException(400, 'Sort should be either room_name or room_number');
+
+    const rooms = await RoomModel.query()
+      .select('rooms.id', 'rooms.room_number', 'rooms.room_name', RoomModel.knex().raw(`COALESCE(COUNT(reservations.id), 0) AS total_reservations`))
+      .leftJoin('reservation_rooms', 'rooms.id', 'reservation_rooms.room_id')
+      .leftJoin('reservations', join => {
+        join.on('reservation_rooms.reservation_id', '=', 'reservations.id').andOn('reservations.end_date', '>=', RoomModel.knex().fn.now());
+      })
+      .groupBy('rooms.id')
+      .orderBy(
+        sort === 'total_reservations' ? RoomModel.knex().raw('total_reservations') : sort === 'room_name' ? 'rooms.room_name' : 'rooms.room_number',
+        sortDirection,
+      )
+      .limit(limit)
+      .offset((page - 1) * limit);
 
     const totalRoomsResult = await RoomModel.query().count('id as count').first();
     const totalRooms = Number(totalRoomsResult?.count ?? 0);
@@ -71,10 +82,46 @@ export class RoomService {
     return updateRoomData;
   }
 
-  public async getRoomById({ roomId }: { roomId: number }): Promise<Rooms> {
+  public async getRoomById({ roomId }: { roomId: number }): Promise<{
+    id: number;
+    room_name: string;
+    room_number: number;
+    currentReservation: {
+      id: number;
+      start_date: string;
+      end_date: string;
+    } | null;
+    upcomingReservations: {
+      id: number;
+      start_date: string;
+      end_date: string;
+    }[];
+  }> {
     const findRoom: Rooms = await RoomModel.query().select('id', 'room_name', 'room_number').from('rooms').where('id', '=', roomId).first();
     if (!findRoom) throw new HttpException(409, `This room id ${roomId} does not exist`);
 
-    return findRoom;
+    const currentReservation = await ReservationModel.query()
+      .select('reservations.id', 'reservations.start_date', 'reservations.end_date', 'guests.name as guest_name')
+      .leftJoin('reservation_rooms', 'reservations.id', 'reservation_rooms.reservation_id')
+      .leftJoin('guests', 'reservations.guest_id', 'guests.id')
+      .where('reservation_rooms.room_id', roomId)
+      .andWhere('reservations.start_date', '<=', ReservationModel.fn.now())
+      .andWhere('reservations.end_date', '>=', ReservationModel.fn.now())
+      .first();
+
+    // Fetch upcoming reservations
+    const upcomingReservations = await ReservationModel.query()
+      .select('reservations.id', 'reservations.start_date', 'reservations.end_date', 'guests.name as guest_name')
+      .leftJoin('reservation_rooms', 'reservations.id', 'reservation_rooms.reservation_id')
+      .leftJoin('guests', 'reservations.guest_id', 'guests.id')
+      .where('reservation_rooms.room_id', roomId)
+      .andWhere('reservations.start_date', '>', ReservationModel.fn.now())
+      .orderBy('reservations.start_date', 'asc');
+
+    return {
+      ...findRoom,
+      currentReservation,
+      upcomingReservations,
+    };
   }
 }

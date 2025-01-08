@@ -14,7 +14,7 @@ export class GuestModel extends Model implements Guests {
   static idColumn = 'id'; // id column name
 }
 
-export type UserShape = ModelObject<GuestModel>;
+export type GuestShape = ModelObject<GuestModel>;
 
 // Guest schema
 export const GuestSchema = Type.Object({

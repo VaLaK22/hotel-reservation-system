@@ -2,6 +2,8 @@ import { Service } from 'typedi';
 import { HttpException } from '@exceptions/HttpException';
 import { Guests } from '@interfaces/guests.interface';
 import { GuestModel, Guest } from '@models/guests.model';
+import { ReservationModel } from '@/models/reservations.model';
+import { Reservations } from '@/interfaces/reservations.interface';
 
 @Service()
 export class GuestService {
@@ -13,14 +15,14 @@ export class GuestService {
     if (page < 1) throw new HttpException(400, 'Page should be greater than 0');
 
     const guests: Guests[] = await GuestModel.query()
-      .select('id', 'name', 'phone_number', 'email')
+      .select('guests.id', 'guests.name', 'guests.phone_number', 'guests.email')
       .from('guests')
       .offset(Number((page - 1) * limit))
       .limit(Number(limit));
 
-    const totalRoomsResult = await GuestModel.query().count('id as count').first();
-    const totalRooms = Number(totalRoomsResult?.count ?? 0);
-    const totalPages = Math.ceil(totalRooms / limit);
+    const totalGuestsResult = await GuestModel.query().count('id as count').first();
+    const totalGuests = Number(totalGuestsResult?.count ?? 0);
+    const totalPages = Math.ceil(totalGuests / limit);
 
     return {
       guests,
@@ -55,10 +57,34 @@ export class GuestService {
     return updateGuestData;
   }
 
-  public async getGuestById({ guestId }: { guestId: number }): Promise<Guests> {
+  public async getGuestById({ guestId }: { guestId: number }): Promise<{
+    findGuest: Guests;
+    upcomingReservations: Reservations[];
+    pastReservationsCount: number;
+  }> {
     const findGuest: Guests = await GuestModel.query().select('id', 'name', 'phone_number', 'email').from('guests').where('id', '=', guestId).first();
     if (!findGuest) throw new HttpException(409, `Guest was not found`);
 
-    return findGuest;
+    const upcomingReservations: Reservations[] = await ReservationModel.query()
+      .select(
+        'reservations.id',
+        'reservations.start_date',
+        'reservations.end_date',
+        GuestModel.raw(`json_agg(json_build_object('room_id', rooms.id, 'room_number', rooms.room_number, room_name, rooms.room_name)) as rooms`),
+      )
+      .join('reservation_rooms', 'reservations.id', '=', 'reservation_rooms.reservation_id')
+      .join('rooms', 'reservation_rooms.room_id', '=', 'rooms.id')
+      .groupBy('reservations.id')
+      .orderBy('reservations.start_date', 'asc')
+      .where('reservations.guest_id', '=', guestId)
+      .andWhere('reservations.end_date', '>=', ReservationModel.fn.now());
+
+    const pastReservationsCount = await ReservationModel.query()
+      .count('id as count')
+      .where('guest_id', '=', guestId)
+      .andWhere('end_date', '<', ReservationModel.fn.now())
+      .first();
+
+    return { findGuest, upcomingReservations, pastReservationsCount: Number(pastReservationsCount?.count ?? 0) };
   }
 }

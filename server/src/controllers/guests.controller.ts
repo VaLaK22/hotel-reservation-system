@@ -3,6 +3,7 @@ import { Container } from 'typedi';
 import { Guests } from '@interfaces/guests.interface';
 import { Guest } from '@models/guests.model';
 import { GuestService } from '@services/guests.service';
+import { Reservations } from '@/interfaces/reservations.interface';
 
 export class GuestController {
   public guest = Container.get(GuestService);
@@ -25,7 +26,7 @@ export class GuestController {
     }
   };
 
-  public createUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public createGuest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const guestData: Guest = req.body;
       const createGuestData: Guests = await this.guest.createGuest({
@@ -38,7 +39,7 @@ export class GuestController {
     }
   };
 
-  public updateUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public updateGuest = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const guestId = Number(req.params.id);
       const guestData: Guest = req.body;
@@ -53,10 +54,13 @@ export class GuestController {
     }
   };
 
-  public getUserById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  public getGuestById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const guestId = Number(req.params.id);
-      const findOneGuestData: Guests = await this.guest.getGuestById({
+      const findOneGuestData: {
+        findGuest: Guests;
+        upcomingReservations: Reservations[];
+      } = await this.guest.getGuestById({
         guestId,
       });
 

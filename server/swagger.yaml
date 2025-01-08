@@ -3,6 +3,8 @@ tags:
     description: guests API
   - name: rooms
     description: rooms API
+  - name: reservations
+    description: reservations API
 paths:
   # [GET] guests
   /guests:
@@ -194,6 +196,69 @@ paths:
         500:
           description: 'Server Error'
 
+  # [GET] reservations
+  /reservations:
+    get:
+      tags:
+        - reservations
+      summary: Get all reservations
+      parameters:
+        - name: limit
+          in: query
+          description: Limit
+          required: false
+          type: integer
+        - name: page
+          in: query
+          description: Page
+          required: false
+          type: integer
+      responses:
+        200:
+          description: 'OK'
+        500:
+          description: 'Server Error'
+    post:
+      tags:
+        - reservations
+      summary: Create a reservation
+      parameters:
+        - name: body
+          in: body
+          description: Reservation Object
+          required: true
+          schema:
+            $ref: '#/definitions/reservations'
+      responses:
+        201:
+          description: 'Created'
+        400:
+          description: 'Bad Request'
+        409:
+          description: 'Conflict'
+        500:
+          description: 'Server Error'
+  /reservations/{id}:
+    delete:
+      tags:
+        - reservations
+      summary: Cancel a reservation
+      parameters:
+        - name: id
+          in: path
+          description: 'The ID of the reservation'
+          required: true
+          type: string
+      responses:
+        200:
+          description: 'OK'
+        400:
+          description: 'Bad Request'
+        404:
+          description: 'Not Found'
+        500:
+          description: 'Server Error'
+
 # definitions
 definitions:
   guests:
@@ -224,6 +289,28 @@ definitions:
       room_number:
         type: integer
         description: Room Number
+  reservations:
+    type: object
+    required:
+      - guest_id
+      - room_id
+      - start_date
+      - end_date
+    properties:
+      guest_id:
+        type: integer
+        description: Guest ID
+      room_id:
+        type: array
+        items:
+          type: integer
+        description: Room IDs
+      start_date:
+        type: string
+        description: Start Date
+      end_date:
+        type: string
+        description: End Date
 
 schemes:
   - https

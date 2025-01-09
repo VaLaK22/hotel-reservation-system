@@ -94,15 +94,24 @@ export class GuestsComponent implements OnInit {
     const formValue = this.guestForm.value;
     console.log(formValue);
 
-    this.guestsService.createGuest(formValue).subscribe((data) => {
-      if (data.message === 'created') {
-        this.getGuestsList();
-        this.guestForm.reset();
-        this.addGuest.set(false);
-        alert('Guest created successfully');
-      } else {
-        alert('Something went wrong');
-      }
+    this.guestsService.createGuest(formValue).subscribe({
+      next: (data) => {
+        if (data.message === 'created') {
+          this.getGuestsList();
+          this.guestForm.reset();
+          this.resetAddGuest();
+          alert('Guest created successfully');
+        } else {
+          alert('Something went wrong');
+        }
+      },
+      error: (err) => {
+        alert(
+          `Error: ${
+            err.error.message || 'Something went wrong. Please try again.'
+          }`
+        );
+      },
     });
   }
 
@@ -125,9 +134,8 @@ export class GuestsComponent implements OnInit {
       return;
     }
 
-    this.guestsService
-      .editGuest(this.guest.findGuest.id, formValue)
-      .subscribe((data) => {
+    this.guestsService.editGuest(this.guest.findGuest.id, formValue).subscribe({
+      next: (data) => {
         if (data.message === 'updated') {
           this.getGuestsList();
           this.guestForm.reset();
@@ -136,6 +144,14 @@ export class GuestsComponent implements OnInit {
         } else {
           alert('Something went wrong');
         }
-      });
+      },
+      error: (err) => {
+        alert(
+          `Error: ${
+            err.error.message || 'Something went wrong. Please try again.'
+          }`
+        );
+      },
+    });
   }
 }

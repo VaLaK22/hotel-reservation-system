@@ -78,15 +78,24 @@ export class RoomsComponent implements OnInit {
     const formValue = this.roomForm.value;
     formValue.room_number = parseInt(formValue.room_number, 10);
 
-    this.roomsService.createRoom(this.roomForm.value).subscribe((data) => {
-      if (data.message === 'created') {
-        this.getRoomsList();
-        this.roomForm.reset();
-        this.resetAddRoom();
-        alert('Room created successfully');
-      } else {
-        alert('Something went wrong');
-      }
+    this.roomsService.createRoom(formValue).subscribe({
+      next: (data) => {
+        if (data.message === 'created') {
+          this.getRoomsList();
+          this.roomForm.reset();
+          this.resetAddRoom();
+          alert('Room created successfully');
+        } else {
+          alert('Something went wrong');
+        }
+      },
+      error: (err) => {
+        alert(
+          `Error: ${
+            err.error.message || 'Something went wrong. Please try again.'
+          }`
+        );
+      },
     });
   }
 
@@ -113,15 +122,24 @@ export class RoomsComponent implements OnInit {
       return;
     }
 
-    this.roomsService.editRoom(this.room.id, formValue).subscribe((data) => {
-      if (data.message === 'updated') {
-        this.getRoomsList();
-        this.roomForm.reset();
-        this.resetEditRoom();
-        alert('Room updated successfully');
-      } else {
-        alert('Something went wrong');
-      }
+    this.roomsService.editRoom(this.room.id, formValue).subscribe({
+      next: (data) => {
+        if (data.message === 'updated') {
+          this.getRoomsList();
+          this.roomForm.reset();
+          this.resetEditRoom();
+          alert('Room updated successfully');
+        } else {
+          alert('Something went wrong');
+        }
+      },
+      error: (err) => {
+        alert(
+          `Error: ${
+            err.error.message || 'Something went wrong. Please try again.'
+          }`
+        );
+      },
     });
   };
 }

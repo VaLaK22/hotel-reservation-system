@@ -120,13 +120,22 @@ export class ReservationsComponent implements OnInit {
       return;
     }
 
-    this.reservationsService.cancelReservation(id).subscribe((data) => {
-      if (data.message === 'deleted') {
-        this.getReservations();
-        alert('Reservation cancelled successfully');
-      } else {
-        alert('Something went wrong');
-      }
+    this.reservationsService.cancelReservation(id).subscribe({
+      next: (data) => {
+        if (data.message === 'deleted') {
+          this.getReservations();
+          alert('Reservation cancelled successfully');
+        } else {
+          alert('Something went wrong');
+        }
+      },
+      error: (err) => {
+        alert(
+          `Error:  ${
+            err.error.message || 'Something went wrong. Please try again.'
+          }`
+        );
+      },
     });
   }
 }

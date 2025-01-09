@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { GuestsService } from '../../services/guests.service';
 import { IGetGuestsResponse, IGuest, IGuestById } from '../../model/Guest';
 import {
@@ -14,7 +14,7 @@ import {
   templateUrl: './guests.component.html',
   styleUrl: './guests.component.css',
 })
-export class GuestsComponent {
+export class GuestsComponent implements OnInit {
   constructor(private readonly fb: NonNullableFormBuilder) {
     this.guestForm = fb.group({
       name: ['', [Validators.required]],

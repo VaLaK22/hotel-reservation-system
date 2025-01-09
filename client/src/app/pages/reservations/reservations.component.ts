@@ -93,15 +93,24 @@ export class ReservationsComponent implements OnInit {
     const formValue = this.reservationForm.value;
     formValue.guest_id = Number(formValue.guest_id);
     formValue.room_id = [Number(formValue.room_id)];
-    this.reservationsService.createReservation(formValue).subscribe((data) => {
-      if (data.message === 'created') {
-        this.getReservations();
-        this.reservationForm.reset();
-        this.resetAddReservation();
-        alert('Reservation created successfully');
-      } else {
-        alert('Something went wrong');
-      }
+    this.reservationsService.createReservation(formValue).subscribe({
+      next: (data) => {
+        if (data.message === 'created') {
+          this.getReservations();
+          this.reservationForm.reset();
+          this.resetAddReservation();
+          alert('Reservation created successfully');
+        } else {
+          alert('Something went wrong');
+        }
+      },
+      error: (err) => {
+        alert(
+          `Error:  ${
+            err.error.message || 'Something went wrong. Please try again.'
+          }`
+        );
+      },
     });
   }
 
@@ -110,6 +119,7 @@ export class ReservationsComponent implements OnInit {
     if (!result) {
       return;
     }
+
     this.reservationsService.cancelReservation(id).subscribe((data) => {
       if (data.message === 'deleted') {
         this.getReservations();

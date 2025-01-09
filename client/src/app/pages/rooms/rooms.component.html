@@ -1,1 +1,306 @@
-<p>rooms works!</p>
+<div
+  [class]="
+    addRoom() || editRoom()
+      ? 'hidden'
+      : 'block shadow-md rounded-lg mx-auto sm:p-6 w-[calc(100vw-20rem)]'
+  "
+>
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">Rooms</h1>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <button
+        type="button"
+        (click)="setAddRoom()"
+        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Add Room
+      </button>
+    </div>
+  </div>
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div
+          class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+        >
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                >
+                  Room number
+                </th>
+                <th
+                  scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
+                  Room name
+                </th>
+                <th
+                  scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
+                  Upcoming Reservations
+                </th>
+
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              @for (room of roomsList; track room.id){
+              <tr>
+                <td
+                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ room.room_number }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ room.room_name }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ room.total_reservations }}
+                </td>
+
+                <td
+                  class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
+                >
+                  <button
+                    (click)="getRoom(room.id)"
+                    type="button"
+                    class="text-indigo-600 hover:text-indigo-900"
+                  >
+                    Edit/View
+                  </button>
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form
+  name="roomForm"
+  [formGroup]="roomForm"
+  (ngSubmit)="
+    addRoom() ? handleFormSubmit() : editRoom() ? handleEditRoom() : null
+  "
+  [className]="
+    addRoom() || editRoom()
+      ? 'block shadow-md rounded-lg mx-auto sm:p-6 w-[calc(100vw-20rem)]'
+      : 'hidden'
+  "
+>
+  <div class="space-y-12">
+    <div class="border-b border-gray-900/10 pb-12">
+      <h2
+        class="text-base font-semibold leading-7 text-gray-900 mx-auto flex items-center justify-center"
+      >
+        {{ editRoom() ? "Edit" : "Create" }} Room
+      </h2>
+      <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="sm:col-span-3">
+          <label
+            for="room_number"
+            class="block text-sm font-medium leading-6 text-gray-900"
+            >Room number</label
+          >
+          <div class="mt-2">
+            <input
+              type="text"
+              name="room_number"
+              id="room_number"
+              formControlName="room_number"
+              class="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+
+        <div class="sm:col-span-3">
+          <label
+            for="room_name"
+            class="block text-sm font-medium leading-6 text-gray-900"
+            >Room name</label
+          >
+          <div class="mt-2">
+            <input
+              type="text"
+              name="room_name"
+              id="room_name"
+              formControlName="room_name"
+              class="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 flex items-center justify-center gap-x-6">
+    <button
+      type="button"
+      (click)="addRoom() ? resetAddRoom() : resetEditRoom()"
+      class="text-sm font-semibold leading-6 text-gray-900"
+    >
+      Cancel
+    </button>
+    <button
+      type="submit"
+      class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+    >
+      {{ editRoom() ? "Edit" : "Create" }}
+    </button>
+  </div>
+</form>
+
+<div
+  [className]="
+    editRoom()
+      ? 'block shadow-md rounded-lg mx-auto sm:p-6 w-[calc(100vw-20rem)]'
+      : 'hidden'
+  "
+>
+  @if(room.currentReservation?.id && room.currentReservation.id > 0) {
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">
+        Current Reservations
+      </h1>
+    </div>
+    <!-- <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      Past Reservations: {{ room.pastReservationsCount }}
+    </div> -->
+  </div>
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div
+          class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+        >
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                >
+                  Guest Name
+                </th>
+                <th
+                  scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
+                  From
+                </th>
+                <th
+                  scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
+                  To
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr>
+                <td
+                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ room.currentReservation.guest_name }}
+                </td>
+
+                <td class="whitespace -nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ room.currentReservation.start_date.split("T")[0] || "" }}
+                </td>
+                <td class="whitespace -nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ room.currentReservation.end_date.split("T")[0] || "" }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  } @else {
+  <p [className]="editRoom() ? 'block text-center' : 'hidden'">
+    No current reservations found
+  </p>
+  } @if (room.upcomingReservations && room.upcomingReservations.length > 0) {
+  <div class="sm:flex sm:items-center pt-4">
+    <div class="sm:flex-auto">
+      <h1 class="text-base font-semibold leading-6 text-gray-900">
+        Upcoming Reservations
+      </h1>
+    </div>
+    <!-- <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      Past Reservations: {{ room.pastReservationsCount }}
+    </div> -->
+  </div>
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div
+          class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg"
+        >
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  scope="col"
+                  class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
+                >
+                  Guest Name
+                </th>
+                <th
+                  scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
+                  From
+                </th>
+                <th
+                  scope="col"
+                  class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                >
+                  To
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              @for (reservation of room.upcomingReservations; track
+              reservation.id){
+              <tr>
+                <td
+                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                >
+                  {{ reservation.guest_name }}
+                </td>
+
+                <td class="whitespace -nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ reservation.start_date.split("T")[0] }}
+                </td>
+                <td class="whitespace -nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ reservation.end_date.split("T")[0] }}
+                </td>
+              </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  } @else {
+  <p [className]="editRoom() ? 'block text-center pt-4' : 'hidden'">
+    No upcoming reservations found
+  </p>
+  }
+</div>

@@ -68,3 +68,20 @@ export interface ICreateReservationResponse {
 export interface ICancelReservationResponse {
   message: string;
 }
+
+export interface IMonthlyReservationsResponse {
+  data: {
+    days: {
+      date: string;
+      reservationCount: number;
+      reservations: {
+        id: number;
+        start_date: string;
+        end_date: string;
+        room_number: number;
+        guest_name: string;
+      }[];
+    }[];
+  };
+  message: string;
+}

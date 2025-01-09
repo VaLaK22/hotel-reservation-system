@@ -7,6 +7,7 @@ import {
   IGetRoomsResponse,
   IGetRservationResponse,
   IReservation,
+  IMonthlyReservationsResponse,
 } from '../model/Reservation';
 import { Observable } from 'rxjs';
 
@@ -45,6 +46,15 @@ export class ReservationsService {
   cancelReservation(id: number): Observable<ICancelReservationResponse> {
     return this.http.delete<ICancelReservationResponse>(
       `http://localhost:3000/reservations/${id}`
+    );
+  }
+
+  getMonthlyReservations(
+    year: number,
+    month: number
+  ): Observable<IMonthlyReservationsResponse> {
+    return this.http.get<IMonthlyReservationsResponse>(
+      `http://localhost:3000/reservations/calendar/${month}/${year}`
     );
   }
 }

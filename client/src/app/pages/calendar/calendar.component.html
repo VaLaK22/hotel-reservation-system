@@ -1,1 +1,54 @@
-<p>calendar works!</p>
+<div class="flex flex-col items-center">
+  <div class="flex justify-between items-center w-full max-w-2xl p-4">
+    <button
+      class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+      (click)="
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        generateCalendar();
+        loadReservations()
+      "
+    >
+      Previous
+    </button>
+    <h2 class="text-xl font-bold">
+      {{ currentDate.getMonth() + 1 }} / {{ currentDate.getFullYear() }}
+    </h2>
+    <button
+      class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+      (click)="
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        generateCalendar();
+        loadReservations()
+      "
+    >
+      Next
+    </button>
+  </div>
+
+  <div class="grid grid-cols-7 gap-2 w-full max-w-2xl">
+    @for (day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']; track
+    $index) {
+
+    <div class="text-center font-semibold">
+      {{ day }}
+    </div>
+
+    } @for (date of daysInMonth; track $index) {
+    <div
+      class="relative p-4 border rounded-lg bg-gray-100"
+      [class.bg-gray-200]="date.getMonth() !== currentDate.getMonth()"
+    >
+      <span class="absolute top-1 left-1 text-sm font-bold">
+        {{ date.getDate() }}
+      </span>
+      @if (getReservationCount(date) > 0){
+      <span
+        class="absolute bottom-1 right-1 text-xs bg-blue-100 text-blue-700 p-1 rounded-full"
+      >
+        {{ getReservationCount(date) }}
+      </span>
+      }
+    </div>
+    }
+  </div>
+</div>

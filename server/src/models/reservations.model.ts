@@ -25,6 +25,11 @@ export const ReservationSchema = Type.Object({
   end_date: Type.String(),
 });
 
+export const getMonthlyReservationsSchema = Type.Object({
+  month: Type.String({ pattern: '^(0[1-9]|1[0-2])$', maxLength: 2, minLength: 2 }),
+  year: Type.String({ pattern: '^[0-9]{4}$', maxLength: 4, minLength: 4 }),
+});
+
 export const ReservationIdSchema = Type.Object({
   id: Type.Integer({ minimum: 1 }),
 });

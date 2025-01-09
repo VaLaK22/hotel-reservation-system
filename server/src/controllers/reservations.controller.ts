@@ -75,4 +75,19 @@ export class ReservationController {
       next(error);
     }
   };
+
+  public getMonthlyReservationsController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const year = Number(req.params.year);
+      const month = Number(req.params.month);
+
+      const data = await this.reservation.getMonthlyReservations({
+        year,
+        month,
+      });
+      res.status(200).json({ data, message: 'getMonthlyReservations' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

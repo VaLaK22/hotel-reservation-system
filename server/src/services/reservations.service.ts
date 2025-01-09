@@ -113,4 +113,61 @@ export class ReservationService {
 
     await ReservationModel.query().deleteById(reservationId);
   }
+
+  public async getMonthlyReservations({ year, month }: { year: number; month: number }): Promise<{
+    days: {
+      date: string;
+      reservationCount: number;
+      reservations: {
+        id: number;
+        start_date: string;
+        end_date: string;
+        room_number: string;
+        guest_name: string;
+      }[];
+    }[];
+  }> {
+    if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+      throw new HttpException(400, 'Invalid year or month');
+    }
+
+    const startOfMonth = new Date(year, month - 1, 1).toISOString().split('T')[0];
+    const endOfMonth = new Date(year, month, 0).toISOString().split('T')[0];
+
+    // Fetch reservations within the month
+    const reservations = await ReservationModel.query()
+      .select('reservations.id', 'reservations.start_date', 'reservations.end_date', 'rooms.room_number', 'guests.name as guest_name')
+      .leftJoin('reservation_rooms', 'reservations.id', 'reservation_rooms.reservation_id')
+      .leftJoin('rooms', 'reservation_rooms.room_id', 'rooms.id')
+      .leftJoin('guests', 'reservations.guest_id', 'guests.id')
+      .where('reservations.start_date', '<=', endOfMonth)
+      .andWhere('reservations.end_date', '>=', startOfMonth);
+
+    // Generate a calendar with reservation counts for each day
+    const days: Record<string, { date: string; reservationCount: number; reservations: any[] }> = {};
+
+    for (let day = 1; day <= new Date(year, month, 0).getDate(); day++) {
+      const date = new Date(year, month - 1, day).toISOString().split('T')[0];
+      days[date] = { date, reservationCount: 0, reservations: [] };
+    }
+
+    reservations.forEach(reservation => {
+      const { start_date, end_date } = reservation;
+
+      const start = new Date(start_date);
+      const end = new Date(end_date);
+
+      for (let d = start; d <= end && d.getMonth() + 1 === month; d.setDate(d.getDate() + 1)) {
+        const date = d.toISOString().split('T')[0];
+        if (days[date]) {
+          days[date].reservationCount += 1;
+          days[date].reservations.push(reservation);
+        }
+      }
+    });
+
+    return {
+      days: Object.values(days),
+    };
+  }
 }

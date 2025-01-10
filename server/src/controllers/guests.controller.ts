@@ -69,4 +69,14 @@ export class GuestController {
       next(error);
     }
   };
+
+  public guestDropdown = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const guests = await this.guest.getGuestsDropdown();
+
+      res.status(200).json({ data: guests, message: 'findAll' });
+    } catch (error) {
+      next(error);
+    }
+  };
 }

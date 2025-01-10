@@ -87,4 +87,9 @@ export class GuestService {
 
     return { findGuest, upcomingReservations, pastReservationsCount: Number(pastReservationsCount?.count ?? 0) };
   }
+
+  public async getGuestsDropdown(): Promise<Guests[]> {
+    const guests: Guests[] = await GuestModel.query().select('id', 'name').from('guests');
+    return guests;
+  }
 }

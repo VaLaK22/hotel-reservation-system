@@ -16,6 +16,7 @@ export class GuestRoute implements Routes {
   private initializeRoutes() {
     this.router.get(`${this.path}`, this.guest.getGuests);
     this.router.post(`${this.path}`, validate(GuestSchema), this.guest.createGuest);
+    this.router.get(`${this.path}/dropdown`, this.guest.guestDropdown);
     this.router.put(`${this.path}/:id`, validate(GuestSchema), this.guest.updateGuest);
     this.router.get(`${this.path}/:id`, this.guest.getGuestById);
   }

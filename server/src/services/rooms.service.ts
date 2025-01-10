@@ -124,4 +124,10 @@ export class RoomService {
       upcomingReservations,
     };
   }
+
+  public async getRoomsDropdown(): Promise<Rooms[]> {
+    const rooms: Rooms[] = await RoomModel.query().select('id', 'room_number', 'room_name').from('rooms').orderBy('room_number', 'asc');
+
+    return rooms;
+  }
 }

@@ -18,11 +18,15 @@ export class ReservationsService {
   constructor(private http: HttpClient) {}
 
   getGuests(): Observable<IGetGuestsResponse> {
-    return this.http.get<IGetGuestsResponse>(`http://localhost:3000/guests`);
+    return this.http.get<IGetGuestsResponse>(
+      `http://localhost:3000/guests/dropdown`
+    );
   }
 
   getRooms(): Observable<IGetRoomsResponse> {
-    return this.http.get<IGetRoomsResponse>('http://localhost:3000/rooms');
+    return this.http.get<IGetRoomsResponse>(
+      'http://localhost:3000/rooms/dropdown'
+    );
   }
 
   getReservations(

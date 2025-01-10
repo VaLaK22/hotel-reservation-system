@@ -23,6 +23,16 @@ export class RoomController {
     }
   };
 
+  public getRoomsDropdown = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const result: Rooms[] = await this.room.getRoomsDropdown();
+
+      res.status(200).json({ data: result, message: 'findAll' });
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public createRoom = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const roomData: Room = req.body;

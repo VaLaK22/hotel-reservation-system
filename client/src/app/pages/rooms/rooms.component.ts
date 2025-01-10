@@ -36,6 +36,7 @@ export class RoomsComponent implements OnInit {
 
   addRoom = signal<boolean>(false);
   editRoom = signal<boolean>(false);
+  viewRoom = signal<boolean>(false);
 
   roomForm: FormGroup;
 
@@ -68,6 +69,14 @@ export class RoomsComponent implements OnInit {
 
   resetEditRoom() {
     this.editRoom.set(false);
+  }
+
+  setViewRoom() {
+    this.viewRoom.set(true);
+  }
+
+  resetViewRoom() {
+    this.viewRoom.set(false);
   }
 
   onSortChange(event: Event) {
@@ -137,7 +146,7 @@ export class RoomsComponent implements OnInit {
     });
   }
 
-  getRoom = (id: number) => {
+  getRoom = (id: number, type: 'edit' | 'view') => {
     this.roomsService.getRoomById(id).subscribe((data) => {
       if (data.message === 'findOne') {
         this.roomForm.patchValue({
@@ -145,6 +154,10 @@ export class RoomsComponent implements OnInit {
           room_name: data.data.room_name,
         });
         this.room = data.data;
+        if (type === 'view') {
+          this.setViewRoom();
+          return;
+        }
         this.setEditRoom();
       } else {
         alert('Something went wrong');

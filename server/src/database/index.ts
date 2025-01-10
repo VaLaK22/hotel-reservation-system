@@ -6,11 +6,12 @@ export const dbConnection = async () => {
   const dbConfig = {
     client: 'pg',
     connection: {
-      user: DB_USER,
-      password: DB_PASSWORD,
       host: DB_HOST,
       port: DB_PORT,
+      user: DB_USER,
+      password: DB_PASSWORD,
       database: DB_DATABASE,
+      timezone: 'UTC',
     },
     pool: {
       min: 2,

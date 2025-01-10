@@ -1,6 +1,6 @@
 <div
   [class]="
-    addRoom() || editRoom()
+    addRoom() || editRoom() || viewRoom()
       ? 'hidden'
       : 'block shadow-md rounded-lg mx-auto sm:p-6 w-[calc(100vw-20rem)]'
   "
@@ -63,6 +63,9 @@
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                   <span class="sr-only">Edit</span>
                 </th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                  <span class="sr-only">View</span>
+                </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
@@ -84,11 +87,22 @@
                   class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
                 >
                   <button
-                    (click)="getRoom(room.id)"
+                    (click)="getRoom(room.id, 'edit')"
                     type="button"
                     class="text-indigo-600 hover:text-indigo-900"
                   >
-                    Edit/View
+                    Edit
+                  </button>
+                </td>
+                <td
+                  class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"
+                >
+                  <button
+                    (click)="getRoom(room.id, 'view')"
+                    type="button"
+                    class="text-indigo-600 hover:text-indigo-900"
+                  >
+                    View
                   </button>
                 </td>
               </tr>
@@ -248,7 +262,7 @@
 
 <div
   [className]="
-    editRoom()
+    viewRoom()
       ? 'block shadow-md rounded-lg mx-auto sm:p-6 w-[calc(100vw-20rem)]'
       : 'hidden'
   "
@@ -315,7 +329,7 @@
     </div>
   </div>
   } @else {
-  <p [className]="editRoom() ? 'block text-center' : 'hidden'">
+  <p [className]="viewRoom() ? 'block text-center' : 'hidden'">
     No current reservations found
   </p>
   } @if (room.upcomingReservations && room.upcomingReservations.length > 0) {
@@ -383,8 +397,17 @@
     </div>
   </div>
   } @else {
-  <p [className]="editRoom() ? 'block text-center pt-4' : 'hidden'">
+  <p [className]="viewRoom() ? 'block text-center pt-4' : 'hidden'">
     No upcoming reservations found
   </p>
   }
+  <div class="mt-6 flex items-center justify-center gap-x-6">
+    <button
+      type="button"
+      (click)="resetViewRoom()"
+      class="text-sm font-semibold leading-6 text-gray-900"
+    >
+      Cancel
+    </button>
+  </div>
 </div>

@@ -36,6 +36,7 @@ export class GuestsComponent implements OnInit {
 
   addGuest = signal<boolean>(false);
   editGuest = signal<boolean>(false);
+  viewGuest = signal<boolean>(false);
 
   guestForm: FormGroup;
 
@@ -79,6 +80,14 @@ export class GuestsComponent implements OnInit {
   resetEditGuest() {
     this.editGuest.set(false);
     this.guestForm.reset();
+  }
+
+  setViewGuest() {
+    this.viewGuest.set(true);
+  }
+
+  resetViewGuest() {
+    this.viewGuest.set(false);
   }
 
   changePage(newPage: number): void {
@@ -146,11 +155,15 @@ export class GuestsComponent implements OnInit {
     });
   }
 
-  getGuest(id: number) {
+  getGuest(id: number, type: 'edit' | 'view') {
     this.guestsService.getGuestById(id).subscribe((data) => {
       if (data.message === 'findOne') {
         this.guestForm.patchValue(data.data.findGuest);
         this.guest = data.data;
+        if (type === 'view') {
+          this.viewGuest.set(true);
+          return;
+        }
         this.editGuest.set(true);
       } else {
         alert('Something went wrong');

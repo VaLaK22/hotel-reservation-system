@@ -89,9 +89,17 @@ export class ReservationService {
 
   public async createReservation({ reservationData }: { reservationData: Reservation }): Promise<number> {
     const { guest_id, start_date, end_date, room_id } = reservationData;
+
+    const updatedEndDate = new Date(end_date);
+    updatedEndDate.setDate(updatedEndDate.getDate() + 1);
+    const updatedStartDate = new Date(start_date);
+    updatedStartDate.setDate(updatedStartDate.getDate() + 1);
+
     return ReservationModel.transaction(async trx => {
       // Insert reservation
-      const [reservationId] = await trx('reservations').insert({ guest_id: guest_id, start_date: start_date, end_date: end_date }).returning('id');
+      const [reservationId] = await trx('reservations')
+        .insert({ guest_id: guest_id, start_date: updatedStartDate, end_date: updatedEndDate })
+        .returning('id');
 
       // Insert room mappings
       const reservationRooms = room_id.map(roomId => ({

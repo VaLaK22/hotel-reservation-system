@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RoomsService } from '../../services/rooms.service';
-import { IGetRoomByIdResponse, IRoom, IRoomById } from '../../model/Room';
+import { IRoom, IRoomById } from '../../model/Room';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -26,8 +26,12 @@ export class RoomsComponent implements OnInit {
   }
 
   roomsService = inject(RoomsService);
-  limit: number = 10;
+
+  limit: number = 8;
   page: number = 1;
+  totalPages: number = 1;
+  totalPagesArr = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+
   sort: string = 'room_number';
 
   addRoom = signal<boolean>(false);
@@ -71,7 +75,35 @@ export class RoomsComponent implements OnInit {
       .getRooms(this.limit, this.page, this.sort)
       .subscribe((data) => {
         this.roomsList = data.data;
+        this.totalPages = data.totalPages;
+        this.page = data.page;
+        this.limit = data.limit;
+        this.totalPagesArr = Array.from(
+          { length: this.totalPages },
+          (_, i) => i + 1
+        );
       });
+  }
+
+  changePage(newPage: number): void {
+    if (newPage >= 1 && newPage <= this.totalPages) {
+      this.page = newPage;
+      this.getRoomsList();
+    }
+  }
+
+  goNextPage(): void {
+    if (this.page < this.totalPages) {
+      this.page++;
+      this.getRoomsList();
+    }
+  }
+
+  goPrevPage(): void {
+    if (this.page > 1) {
+      this.page--;
+      this.getRoomsList();
+    }
   }
 
   handleFormSubmit() {

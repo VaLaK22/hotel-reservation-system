@@ -28,8 +28,11 @@ export class GuestsComponent implements OnInit {
   }
 
   guestsService = inject(GuestsService);
-  limit: number = 10;
+
+  limit: number = 8;
   page: number = 1;
+  totalPages: number = 1;
+  totalPagesArr = Array.from({ length: this.totalPages }, (_, i) => i + 1);
 
   addGuest = signal<boolean>(false);
   editGuest = signal<boolean>(false);
@@ -78,12 +81,40 @@ export class GuestsComponent implements OnInit {
     this.guestForm.reset();
   }
 
+  changePage(newPage: number): void {
+    if (newPage >= 1 && newPage <= this.totalPages) {
+      this.page = newPage;
+      this.getGuestsList();
+    }
+  }
+
+  goNextPage(): void {
+    if (this.page < this.totalPages) {
+      this.page++;
+      this.getGuestsList();
+    }
+  }
+
+  goPrevPage(): void {
+    if (this.page > 1) {
+      this.page--;
+      this.getGuestsList();
+    }
+  }
+
   getGuestsList() {
     this.guestsService
       .getGuests(this.limit, this.page)
       .subscribe((data: IGetGuestsResponse) => {
         if (data.message === 'findAll') {
           this.guestsList = data.data;
+          this.totalPages = data.totalPages;
+          this.page = data.page;
+          this.limit = data.limit;
+          this.totalPagesArr = Array.from(
+            { length: this.totalPages },
+            (_, i) => i + 1
+          );
         } else {
           alert('Something went wrong');
         }

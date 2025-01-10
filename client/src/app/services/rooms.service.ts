@@ -15,12 +15,12 @@ export class RoomsService {
   constructor(private http: HttpClient) {}
 
   getRooms(
-    Limit: number,
-    Page: number,
-    Sort: string
+    limit: number,
+    page: number,
+    sort: string
   ): Observable<IGetRoomsResponse> {
     return this.http.get<IGetRoomsResponse>(
-      `http://localhost:3000/rooms?limit=${Limit}&page=${Page}&sort=${Sort}`
+      `http://localhost:3000/rooms?limit=${limit}&page=${page}&sort=${sort}`
     );
   }
 

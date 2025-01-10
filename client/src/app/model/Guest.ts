@@ -13,6 +13,9 @@ export interface IGetGuestsResponse {
     phone_number: string;
   }[];
   message: string;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface ICreateGuestResponse {

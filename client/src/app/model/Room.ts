@@ -8,6 +8,9 @@ export interface IRoom {
 export interface IGetRoomsResponse {
   data: IRoom[];
   message: string;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export interface ICreateRoomResponse {

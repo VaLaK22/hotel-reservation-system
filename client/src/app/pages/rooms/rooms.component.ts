@@ -70,6 +70,12 @@ export class RoomsComponent implements OnInit {
     this.editRoom.set(false);
   }
 
+  onSortChange(event: Event) {
+    const newSort = (event.target as HTMLSelectElement).value;
+    this.sort = newSort;
+    this.getRoomsList();
+  }
+
   getRoomsList() {
     this.roomsService
       .getRooms(this.limit, this.page, this.sort)

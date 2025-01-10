@@ -5,10 +5,22 @@
       : 'block shadow-md rounded-lg mx-auto sm:p-6 w-[calc(100vw-20rem)]'
   "
 >
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900">Rooms</h1>
+  <div class="flex justify-between">
+    <div class="flex items-center">
+      <label for="rooms-sort" class="mr-2 text-sm text-gray-700 font-medium"
+        >Sort By:</label
+      >
+      <select
+        id="rooms-sort"
+        class="block rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+        (change)="onSortChange($event)"
+      >
+        <option value="room_number">Room Number</option>
+        <option value="room_name">Room Name</option>
+        <option value="total_reservations">Total Reservations</option>
+      </select>
     </div>
+
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
       <button
         type="button"
@@ -19,7 +31,8 @@
       </button>
     </div>
   </div>
-  <div class="mt-8 flow-root">
+
+  <div class="mt-3 flow-root">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
         <div
